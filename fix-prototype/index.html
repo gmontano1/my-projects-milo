@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>GetAdvice - Prototipo del arreglo (no se congela)</title>
+<style>
+  body { font-family: sans-serif; max-width: 500px; margin: 40px auto; padding: 0 16px; }
+  h1 { font-size: 20px; }
+  #chatArea { border: 1px solid #ccc; border-radius: 8px; padding: 12px; min-height: 200px; margin-bottom: 12px; }
+  .mensaje { margin: 8px 0; padding: 8px 12px; border-radius: 8px; }
+  .usuario { background: #dbeafe; text-align: right; }
+  .app { background: #f3f4f6; }
+  .pensando { background: #f3f4f6; color: #6b7280; font-style: italic; }
+  #formulario { display: flex; gap: 8px; }
+  #pregunta { flex: 1; padding: 8px; }
+  button { padding: 8px 16px; }
+</style>
+</head>
+<body>
+  <h1>GetAdvice - Prototipo (arreglo del congelamiento)</h1>
+  <p>Este prototipo muestra como deberia verse GetAdvice mientras espera una respuesta: con un mensaje de "Pensando..." visible, y sin que la pantalla se trabe.</p>
+
+  <div id="chatArea"></div>
+
+  <form id="formulario">
+    <input type="text" id="pregunta" placeholder="Escribe tu pregunta..." autocomplete="off">
+    <button type="submit">Enviar</button>
+  </form>
+
+  <script>
+    // Respuestas de una sola fuente de verdad (evita que la app "adivine").
+    const respuestas = {
+      "que modelo eres": "Soy un modelo de prueba dentro de este prototipo.",
+      "cuando fue tu ultima actualizacion": "Este prototipo se actualizo hoy, 2026-07-02."
+    };
+
+    function normalizar(texto) {
+      return texto
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "")
+        .replace(/[¿?]/g, "")
+        .trim();
+    }
+
+    const formulario = document.getElementById("formulario");
+    const chatArea = document.getElementById("chatArea");
+    const pregunta = document.getElementById("pregunta");
+
+    formulario.addEventListener("submit", function (evento) {
+      evento.preventDefault();
+
+      const texto = pregunta.value.trim();
+      if (texto === "") return;
+
+      agregarMensaje(texto, "usuario");
+      pregunta.value = "";
+
+      // EL ARREGLO: mostramos "pensando" de inmediato y el input NUNCA
+      // se deshabilita, asi la app nunca parece congelada.
+      const mensajePensando = agregarMensaje("Pensando...", "pensando");
+
+      // setTimeout simula la espera real de una respuesta de red,
+      // como el await/fetch de la leccion 12, pero con tiempo fijo.
+      setTimeout(function () {
+        mensajePensando.remove();
+
+        const clave = normalizar(texto);
+        const respuesta = respuestas[clave] || "No lo se con certeza. No tengo esa informacion guardada.";
+        agregarMensaje(respuesta, "app");
+      }, 3000);
+    });
+
+    function agregarMensaje(texto, tipo) {
+      const div = document.createElement("div");
+      div.className = "mensaje " + tipo;
+      div.textContent = texto;
+      chatArea.appendChild(div);
+      chatArea.scrollTop = chatArea.scrollHeight;
+      return div;
+    }
+  </script>
+</body>
+</html>
