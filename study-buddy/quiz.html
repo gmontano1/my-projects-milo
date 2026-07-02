@@ -87,6 +87,10 @@
     document.getElementById("resultsArea").style.display = "block";
     document.getElementById("resultsText").textContent =
       "Tu puntaje: " + score + " de " + questions.length;
+
+    const historial = JSON.parse(localStorage.getItem("scores")) || [];
+    historial.push(score + " de " + questions.length);
+    localStorage.setItem("scores", JSON.stringify(historial));
   }
 
   function restartQuiz() {
