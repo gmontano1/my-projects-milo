@@ -1,0 +1,43 @@
+<h1>Bugs (Lección 13)</h1>
+
+<h2>Caso 1: variable mal escrita</h2>
+<button onclick="addPoint()">Sumar punto</button>
+<p id="case1Result"></p>
+
+<h2>Caso 2: el ciclo empezaba en el lugar equivocado</h2>
+<p id="case2Result"></p>
+
+<h2>Caso 3: el botón no existía todavía cuando corrió el script</h2>
+<button id="start-btn">Start quiz</button>
+<p id="case3Result"></p>
+
+<script>
+  // Caso 1: el código original decía "scor" en vez de "score" (dos veces).
+  // Eso hacía una variable nueva sin querer, en vez de usar la que ya existía.
+  let score = 0;
+  function addPoint() {
+    score = score + 1;
+    document.getElementById("case1Result").textContent = "Score is now " + score;
+  }
+
+  // Caso 2: el ciclo original empezaba en i = 1, así que se saltaba el
+  // primer resultado (posición 0) y contaba mal. Ahora empieza en i = 0.
+  let results = [true, false, true, true]; // 3 correct answers
+  let scoreCase2 = 0;
+  for (let i = 0; i < results.length; i++) {
+    if (results[i] === true) {
+      scoreCase2 = scoreCase2 + 1;
+    }
+  }
+  document.getElementById("case2Result").textContent = "You scored " + scoreCase2;
+</script>
+
+<script>
+  // Caso 3: el <script> original corría ANTES de que el botón existiera en
+  // la página, así que getElementById devolvía null. Ahora este script está
+  // después del <button> en el HTML, así que el botón ya existe cuando corre.
+  const startButton = document.getElementById("start-btn");
+  startButton.addEventListener("click", function () {
+    document.getElementById("case3Result").textContent = "Quiz started!";
+  });
+</script>
