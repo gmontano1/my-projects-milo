@@ -1,0 +1,38 @@
+<link rel="stylesheet" href="styles.css">
+<nav>
+  <a href="index.html">Home</a>
+  <a href="quiz.html">Quiz</a>
+  <a href="scores.html">Scores</a>
+</nav>
+<h1>Scores</h1>
+
+<ul id="listaScores"></ul>
+<p id="sinScores"></p>
+<button onclick="borrarHistorial()">Borrar historial</button>
+
+<script>
+  function mostrarScores() {
+    const historial = JSON.parse(localStorage.getItem("scores")) || [];
+    const lista = document.getElementById("listaScores");
+    lista.innerHTML = "";
+
+    if (historial.length === 0) {
+      document.getElementById("sinScores").textContent =
+        "Todavía no has hecho el quiz. ¡Ve a la pestaña Quiz!";
+    } else {
+      document.getElementById("sinScores").textContent = "";
+      for (let i = 0; i < historial.length; i++) {
+        const item = document.createElement("li");
+        item.textContent = "Intento " + (i + 1) + ": " + historial[i];
+        lista.appendChild(item);
+      }
+    }
+  }
+
+  function borrarHistorial() {
+    localStorage.removeItem("scores");
+    mostrarScores();
+  }
+
+  mostrarScores();
+</script>

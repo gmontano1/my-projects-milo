@@ -1,0 +1,29 @@
+# .gitignore — a little list that tells Git which files to ignore.
+#
+# Git is the tool that remembers the history of your project, like a
+# save button that never forgets. But some files are junk your computer
+# makes on its own, and a few hold private secrets. You don't want those
+# saved. This file is the "please skip these" note, and Git obeys it.
+#
+# You don't need to understand every line yet. Lesson 06 walks you
+# through Git slowly: lessons/06-saving-work-with-git.md
+#
+# One rule to remember: a name ending with a slash ( / ) means a folder.
+
+# Junk files your computer creates automatically (safe to ignore).
+.DS_Store
+Thumbs.db
+
+# Downloaded code libraries — big, and easy to get again anytime.
+node_modules/
+
+# Secret settings like passwords and keys. Never share these. Ever.
+.env
+.env.*
+
+# Settings folders for your code editor — yours, not part of the project.
+.vscode/
+.idea/
+
+# Log files — scratch notes some programs write while they run.
+*.log

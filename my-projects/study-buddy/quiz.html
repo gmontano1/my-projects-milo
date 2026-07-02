@@ -1,0 +1,160 @@
+<link rel="stylesheet" href="styles.css">
+<nav>
+  <a href="index.html">Home</a>
+  <a href="quiz.html">Quiz</a>
+  <a href="scores.html">Scores</a>
+</nav>
+<h1>Quiz</h1>
+
+<p id="modoOffline"></p>
+
+<div id="quizArea">
+  <p id="questionText"></p>
+  <div id="choicesArea"></div>
+</div>
+
+<div id="resultsArea" style="display: none;">
+  <p id="resultsText"></p>
+  <p id="streakText"></p>
+  <button onclick="restartQuiz()">Restart</button>
+</div>
+
+<script src="streak.js"></script>
+<script>
+  const localQuestions = [
+    {
+      question: "¿De qué colores es la bandera de México?",
+      choices: ["Verde, blanco y rojo", "Azul, blanco y rojo", "Amarillo, blanco y verde"],
+      correct: "Verde, blanco y rojo"
+    },
+    {
+      question: "¿Qué animal está en medio de la bandera?",
+      choices: ["Águila", "León", "Perro"],
+      correct: "Águila"
+    },
+    {
+      question: "¿Cómo se llama la comida de maíz envuelta en hoja?",
+      choices: ["Tamal", "Pizza", "Sushi"],
+      correct: "Tamal"
+    },
+    {
+      question: "¿Cuál es la capital de México?",
+      choices: ["Guadalajara", "Ciudad de México", "Cancún"],
+      correct: "Ciudad de México"
+    },
+    {
+      question: "¿En qué fiesta se rompen piñatas?",
+      choices: ["Las Posadas", "Halloween", "Thanksgiving"],
+      correct: "Las Posadas"
+    }
+  ];
+
+  let questions = localQuestions;
+  let currentQuestion = 0;
+  let score = 0;
+
+  function decodeHTML(text) {
+    const el = document.createElement("textarea");
+    el.innerHTML = text;
+    return el.value;
+  }
+
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+    }
+    return array;
+  }
+
+  async function cargarPreguntas() {
+    try {
+      const response = await fetch("https://opentdb.com/api.php?amount=5&type=multiple");
+      const data = await response.json();
+
+      if (!data.results || data.results.length === 0) {
+        throw new Error("La API no mandó preguntas");
+      }
+
+      questions = data.results.map(function (item) {
+        const correct = decodeHTML(item.correct_answer);
+        const choices = item.incorrect_answers.map(decodeHTML);
+        choices.push(correct);
+        return {
+          question: decodeHTML(item.question),
+          choices: shuffle(choices),
+          correct: correct
+        };
+      });
+
+      document.getElementById("modoOffline").textContent = "";
+    } catch (error) {
+      questions = localQuestions;
+      document.getElementById("modoOffline").textContent =
+        "Sin conexión: usando preguntas locales.";
+    }
+
+    showQuestion();
+  }
+
+  function showQuestion() {
+    const card = questions[currentQuestion];
+    document.getElementById("questionText").textContent = card.question;
+
+    const choicesArea = document.getElementById("choicesArea");
+    choicesArea.innerHTML = "";
+
+    for (let i = 0; i < card.choices.length; i++) {
+      const choiceText = card.choices[i];
+      const button = document.createElement("button");
+      button.textContent = choiceText;
+      button.onclick = function () {
+        handleAnswer(choiceText);
+      };
+      choicesArea.appendChild(button);
+    }
+  }
+
+  function handleAnswer(choice) {
+    const card = questions[currentQuestion];
+
+    if (choice === card.correct) {
+      score = score + 1;
+    }
+
+    currentQuestion = currentQuestion + 1;
+
+    if (currentQuestion < questions.length) {
+      showQuestion();
+    } else {
+      showResults();
+    }
+  }
+
+  function showResults() {
+    document.getElementById("quizArea").style.display = "none";
+    document.getElementById("resultsArea").style.display = "block";
+    document.getElementById("resultsText").textContent =
+      "Tu puntaje: " + score + " de " + questions.length;
+
+    const historial = JSON.parse(localStorage.getItem("scores")) || [];
+    historial.push(score + " de " + questions.length);
+    localStorage.setItem("scores", JSON.stringify(historial));
+
+    const rachaActual = recordStudySession();
+    document.getElementById("streakText").textContent =
+      "🔥 Racha de " + rachaActual + " día(s)";
+  }
+
+  function restartQuiz() {
+    currentQuestion = 0;
+    score = 0;
+    document.getElementById("quizArea").style.display = "block";
+    document.getElementById("resultsArea").style.display = "none";
+    cargarPreguntas();
+  }
+
+  cargarPreguntas();
+</script>
