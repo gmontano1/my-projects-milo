@@ -1,0 +1,17 @@
+<style>
+  body {
+    background-color: gray;
+    text-align: center;
+}
+#resultado {
+  font-size: 100px;
+}
+</style>
+  <button onclick="tirarDado()">Roll</button>
+  <p id="resultado"></p>
+  <script>
+  function tirarDado() {
+  const numero = Math.floor(Math.random() * 6) + 1;
+  document.getElementById("resultado").textContent = numero;
+}
+</script>
