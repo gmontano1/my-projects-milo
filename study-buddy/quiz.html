@@ -5,4 +5,97 @@
   <a href="scores.html">Scores</a>
 </nav>
 <h1>Quiz</h1>
-<p>Las preguntas llegan en la lección 10.</p>
+
+<div id="quizArea">
+  <p id="questionText"></p>
+  <div id="choicesArea"></div>
+</div>
+
+<div id="resultsArea" style="display: none;">
+  <p id="resultsText"></p>
+  <button onclick="restartQuiz()">Restart</button>
+</div>
+
+<script>
+  const questions = [
+    {
+      question: "¿De qué colores es la bandera de México?",
+      choices: ["Verde, blanco y rojo", "Azul, blanco y rojo", "Amarillo, blanco y verde"],
+      correct: "Verde, blanco y rojo"
+    },
+    {
+      question: "¿Qué animal está en medio de la bandera?",
+      choices: ["Águila", "León", "Perro"],
+      correct: "Águila"
+    },
+    {
+      question: "¿Cómo se llama la comida de maíz envuelta en hoja?",
+      choices: ["Tamal", "Pizza", "Sushi"],
+      correct: "Tamal"
+    },
+    {
+      question: "¿Cuál es la capital de México?",
+      choices: ["Guadalajara", "Ciudad de México", "Cancún"],
+      correct: "Ciudad de México"
+    },
+    {
+      question: "¿En qué fiesta se rompen piñatas?",
+      choices: ["Las Posadas", "Halloween", "Thanksgiving"],
+      correct: "Las Posadas"
+    }
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+
+  function showQuestion() {
+    const card = questions[currentQuestion];
+    document.getElementById("questionText").textContent = card.question;
+
+    const choicesArea = document.getElementById("choicesArea");
+    choicesArea.innerHTML = "";
+
+    for (let i = 0; i < card.choices.length; i++) {
+      const choiceText = card.choices[i];
+      const button = document.createElement("button");
+      button.textContent = choiceText;
+      button.onclick = function () {
+        handleAnswer(choiceText);
+      };
+      choicesArea.appendChild(button);
+    }
+  }
+
+  function handleAnswer(choice) {
+    const card = questions[currentQuestion];
+
+    if (choice === card.correct) {
+      score = score + 1;
+    }
+
+    currentQuestion = currentQuestion + 1;
+
+    if (currentQuestion < questions.length) {
+      showQuestion();
+    } else {
+      showResults();
+    }
+  }
+
+  function showResults() {
+    document.getElementById("quizArea").style.display = "none";
+    document.getElementById("resultsArea").style.display = "block";
+    document.getElementById("resultsText").textContent =
+      "Tu puntaje: " + score + " de " + questions.length;
+  }
+
+  function restartQuiz() {
+    currentQuestion = 0;
+    score = 0;
+    document.getElementById("quizArea").style.display = "block";
+    document.getElementById("resultsArea").style.display = "none";
+    showQuestion();
+  }
+
+  showQuestion();
+</script>
