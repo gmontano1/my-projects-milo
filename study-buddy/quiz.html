@@ -15,9 +15,11 @@
 
 <div id="resultsArea" style="display: none;">
   <p id="resultsText"></p>
+  <p id="streakText"></p>
   <button onclick="restartQuiz()">Restart</button>
 </div>
 
+<script src="streak.js"></script>
 <script>
   const localQuestions = [
     {
@@ -140,6 +142,10 @@
     const historial = JSON.parse(localStorage.getItem("scores")) || [];
     historial.push(score + " de " + questions.length);
     localStorage.setItem("scores", JSON.stringify(historial));
+
+    const rachaActual = recordStudySession();
+    document.getElementById("streakText").textContent =
+      "🔥 Racha de " + rachaActual + " día(s)";
   }
 
   function restartQuiz() {
