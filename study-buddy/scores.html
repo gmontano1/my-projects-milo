@@ -5,4 +5,22 @@
   <a href="scores.html">Scores</a>
 </nav>
 <h1>Scores</h1>
-<p>Los puntajes llegan en la lección 11.</p>
+
+<ul id="listaScores"></ul>
+<p id="sinScores"></p>
+
+<script>
+  const historial = JSON.parse(localStorage.getItem("scores")) || [];
+  const lista = document.getElementById("listaScores");
+
+  if (historial.length === 0) {
+    document.getElementById("sinScores").textContent =
+      "Todavía no has hecho el quiz. ¡Ve a la pestaña Quiz!";
+  } else {
+    for (let i = 0; i < historial.length; i++) {
+      const item = document.createElement("li");
+      item.textContent = "Intento " + (i + 1) + ": " + historial[i];
+      lista.appendChild(item);
+    }
+  }
+</script>
